@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+/* Monte Carlo Simulation Code */
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    srand(time(0));
+
+    int start_price = 12000;    // multiplying the numbers by 100 to avoid floating point operations
+    int target_price = 13000;
+    int total_steps = 3600 * 3 / 5;
+    
+    double p_up = 0.1;
+    double p_down = 0.05;
+
+    mt19937 rng(42);
+    uniform_real_distribution<double> dist(0.0, 1.0);
+
+    int simulations = 100000;
+    int success_count = 0;
+    
+    for (int i=0; i<simulations; i++) {
+        int price = start_price;
+        bool exercised=false;
+        cout<<i<<", ";
+        
+        for (int j=0; j<total_steps; j++) {
+            double rand_val = dist(rng);
+
+            if (rand_val < p_up) {
+                price++;
+            } 
+            else if (rand_val >= 1.0-p_down) {
+                price--;
+            }
+            // else price stays same
+            
+            if (price >= target_price) {
+                exercised = true;
+                break;
+            }
+        }
+        
+        if (exercised) {
+            success_count++;
+        }
+    }
+    
+    double probability = (double)success_count/simulations;
+    // cout << fixed << setprecision(6);
+    cout << "Probability: " << probability * 100 << "%" << endl;
+    
+    return 0;
+}
